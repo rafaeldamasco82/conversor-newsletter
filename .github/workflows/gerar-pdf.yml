@@ -38,8 +38,16 @@ jobs:
 
       - name: Validar configurações
         run: |
-          node -e "require('./conversor.js')"
-          echo "✅ Configurações validadas"
+          node -e '
+          const fs = require("fs");
+          try {
+            require("./conversor.js");
+            console.log("✅ Configurações validadas");
+          } catch (error) {
+            console.error("❌ Erro ao carregar conversor.js:", error);
+            process.exit(1);
+          }
+          '
 
       - name: Gerar PDF da edição
         run: |
@@ -52,16 +60,3 @@ jobs:
           name: newsletter-${{ github.event.inputs.pasta }}
           path: newsletters/${{ github.event.inputs.pasta }}/output.pdf
           retention-days: 30
-
-      - name: Notificar em caso de falha
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Falha na geração do PDF - Edição ${{ github.event.inputs.pasta }}`,
-              body: 'A geração do PDF falhou. Por favor, verifique os logs da ação.'
-            })

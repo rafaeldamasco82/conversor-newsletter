@@ -7,15 +7,6 @@ on:
         description: 'Nome da pasta da edição (ex: marco)'
         required: true
         default: 'marco'
-      log_level:
-        description: 'Log level'
-        required: false
-        default: 'info'
-        type: choice
-        options:
-          - info
-          - debug
-          - error
 
 jobs:
   gerar-pdf:
@@ -36,10 +27,32 @@ jobs:
           npm ci
           npm install puppeteer
 
-      - name: Gerar PDF da edição
+      - name: Validar existência da pasta e do index.html
         run: |
-          chmod +x gerar-pdf.sh
-          ./gerar-pdf.sh ${{ github.event.inputs.pasta }}
+          PASTA="newsletters/${{ github.event.inputs.pasta }}"
+          if [ ! -d "$PASTA" ]; then
+            echo "❌ ERRO: Pasta '$PASTA' não encontrada."
+            exit 1
+          fi
+          if [ ! -f "$PASTA/index.html" ]; then
+            echo "❌ ERRO: Arquivo '$PASTA/index.html' não encontrado."
+            exit 1
+          fi
+          echo "✅ Validações concluídas com sucesso."
+
+      - name: Gerar PDF diretamente com Node.js
+        run: |
+          cd newsletters/${{ github.event.inputs.pasta }}
+          node ../../conversor.js index.html output.pdf
+
+      - name: Validar se o PDF foi gerado
+        run: |
+          PDF_PATH="newsletters/${{ github.event.inputs.pasta }}/output.pdf"
+          if [ ! -f "$PDF_PATH" ]; then
+            echo "❌ ERRO: Falha na geração do PDF."
+            exit 1
+          fi
+          echo "✅ PDF gerado com sucesso em $PDF_PATH"
 
       - name: Fazer upload do PDF como artefato
         uses: actions/upload-artifact@v4

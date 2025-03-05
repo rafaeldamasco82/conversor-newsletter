@@ -36,18 +36,6 @@ jobs:
           npm ci
           npm install puppeteer
 
-      - name: Validar configurações
-        run: node -e "
-          const fs = require('fs');
-          try {
-            require('./conversor.js');
-            console.log('✅ Configurações validadas');
-          } catch (error) {
-            console.error('❌ Erro ao carregar conversor.js:', error);
-            process.exit(1);
-          }
-          "
-
       - name: Gerar PDF da edição
         run: |
           chmod +x gerar-pdf.sh

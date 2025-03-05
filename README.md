@@ -1,3 +1,6 @@
+![Status da Action - Gerar PDF](https://github.com/rafaeldamasco82/conversor-newsletter/actions/workflows/gerar-pdf.yml/badge.svg)
+
+
 # Newsletter PDF Converter
 
 ## 📝 Descrição

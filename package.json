@@ -1,0 +1,12 @@
+{
+  "name": "conversor-newsletter",
+  "version": "1.0.0",
+  "description": "Conversor de HTML para PDF com emojis em imagens",
+  "main": "conversor.js",
+  "scripts": {
+    "start": "node conversor.js"
+  },
+  "dependencies": {
+    "puppeteer": "^24.3.1"
+  }
+}
